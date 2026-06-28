@@ -62,13 +62,14 @@ const ABSURD = [
   {e:'🐉',n:'ביצי דרקון עלובה',s:'ברוטב יוזו-לבנדר'},
   {e:'🧚',n:'סופלה לבנדר',s:'על מצע ערפל בוקר'},
   {e:'🪐',n:'אוויר צח מהאלפים',s:'מנה ל-12 סועדים'},
-  {e:'🦞',n:'קרפצ׳יו לובסטר',s:'מעושן בעצי בונסאי'},
+  {e:'🍦',n:'גלידת דמדומים סגולה',s:'בטעם של יום שישי אחה״צ'},
+  {e:'🌫️',n:'ערפל הרים כבוש בצנצנת',s:'נקטף עם הזריחה'},
 ];
 const VEG = {e:'🥗',n:'מגש ירקות חתוכים',s:'חסה, סלרי, גזר, שמיר ופטרוזיליה/כוסברה לבחירתכם',veg:true};
 
 const LOSE_STAMP = ['נגמר.','פספסת.','איחרת.','אאוץ׳.'];
 const LOSE_TITLE = ['כל הכיבוד נחטף.','היית איטי מדי.','שובצת ל… כלום.','כולם הקדימו אותך.'];
-const LOSE_SUB   = 'הפעם לא הצלחת — קשה באימונים, קל בקרב 💪\nנשארו רק שתי אופציות 👇';
+const LOSE_BRAND = 'לא נורא, הפעם לא הצלחת. קשה באימונים קל בקרב, אבל אם כבר ירקות אז רק של <b>חסלט</b>. גם נקיים מחרקים וגם מפוקחים משאריות חומרי הדברה. <span class="wink">(היינו חייבים את המסר השיווקי כאן כדי להצדיק את המימון של הפיתוח)</span>';
 
 /* ------------------- state ------------------- */
 const S = { muted:false, audioReady:false, timers:[], chatDone:false };
@@ -211,7 +212,15 @@ function beginRush(){
     .map(it=>({it,silly:SILLY.includes(it)}))
     .sort((a,b)=> (b.silly?1:0)-(a.silly?1:0));   // the too-easy stuff goes first
   order.forEach((o,k)=> wait(()=>snatchRow(game.rowOf.get(o.it),o.it,false), 220+k*230+Math.random()*120));
-  wait(afterRush, 220+order.length*230+360);
+  const waveEnd = 220+order.length*230+420;
+  if(game.lucky){
+    // ~1 in 8: one easy item just stays open ~3s — quick fingers can still grab it
+    game.rowOf.get(game.lucky).classList.add('row--lucky');
+    game.luckyTimer = wait(()=>{ if(game.over||game.luckyResolved) return;
+      snatchRow(game.rowOf.get(game.lucky),game.lucky,false,true); finishLose(); }, 3000);
+  } else {
+    wait(()=>{ if(!game.over) finishLose(); }, waveEnd);
+  }
 }
 function snatchRow(li,it,byPlayer,silent){
   if(game.over || !li || li.classList.contains('row--snatched')) return;
@@ -225,19 +234,6 @@ function snatchRow(li,it,byPlayer,silent){
   if(!silent){
     if(game.snatched===2) status('נחטף. נחטף. 😶', true);
     else if(game.snatched===4) status('כולם מהירים ממך. תמיד היו.', true);
-  }
-}
-function afterRush(){
-  if(game.over) return;
-  if(game.lucky && !game.luckyResolved){
-    const li=game.rowOf.get(game.lucky);
-    li.classList.add('row--lucky');
-    li.querySelector('.row__who').innerHTML='<span class="row__free">פנוי! מהר 👆</span>';
-    status(`רגע… <b>${game.lucky.n}</b> עדיין פנוי?! תפוס מהר!`, true);
-    playDing();
-    game.luckyTimer = wait(()=>{ if(game.over) return; snatchRow(game.rowOf.get(game.lucky),game.lucky,false,true); finishLose(); }, 3300);
-  } else {
-    finishLose();
   }
 }
 function onRowClick(li,it){
@@ -259,15 +255,14 @@ function finishLose(chosen){
   game.over=true; game.result='lose'; clearTimers();
   game.rowOf.get(game.finalTwo[0]).classList.add('row--left');
   game.rowOf.get(game.finalTwo[1]).classList.add('row--left');
-  status('זהו. נשארו רק אלה. 🤷');
-  wait(()=>showResult('lose',{}), chosen?500:1400);
+  status('זהו. נשארו רק אלה 👇 אז במה תבחר/י?');
+  wait(()=>showResult('lose',{}), chosen?900:2800);   // give a few seconds to read the list
 }
 
 /* ================= RESULT ================= */
-function leftCard(it, variant, tag){
+function leftCard(it, variant){
   return `<div class="left-card left-card--${variant}"><span class="e">${it.e}</span>`+
-    `<div class="t"><b>${escapeHtml(it.n)}</b>${it.s?`<span>${escapeHtml(it.s)}</span>`:''}</div>`+
-    `<span class="left-card__tag">${tag}</span></div>`;
+    `<div class="t"><b>${escapeHtml(it.n)}</b>${it.s?`<span>${escapeHtml(it.s)}</span>`:''}</div></div>`;
 }
 function showResult(kind,data){
   const url=location.href.split('#')[0];
@@ -275,18 +270,19 @@ function showResult(kind,data){
     $('#resultStamp').textContent='רגע מה?!';
     $('#resultTitle').innerHTML='הספקת!! <span class="hl">🤯</span>';
     $('#resultSub').innerHTML=`תפסת <b>${escapeHtml(data.item.n)}</b> לפני כולם. תצלם מסך — אף אחד לא יאמין לך.`;
-    $('#resultLeft').innerHTML=leftCard(data.item,'veg','שלך! 🎉');
-    $('#resultBrand').innerHTML='ובכל זאת — ירקות של <b>חסלט</b> הם הדבר הכי נקי שיגיע לשולחן: בלי חרקים, בלי שאריות חומרי הדברה. <span class="wink">(גם כשמנצחים, אנחנו מספיקים למכור. ככה זה 😎)</span>';
-    game.shareText=`לא תאמינו — הספקתי לתפוס "${data.item.n}" בשיבוץ הכיבוד של הגן לפני כולם 🤯 (קורה אחת ל-8)\nתנסו את המזל: ${url}\nבחסות חסלט 🥦`;
+    $('#resultLeft').innerHTML=leftCard(data.item,'veg');
+    $('#resultBrand').innerHTML='אבל היי — אם כבר מביאים, ירקות של <b>חסלט</b> תמיד מנצחים: נקיים מחרקים ובלי שאריות חומרי הדברה. <span class="wink">(חייבים להגניב פרסומת, אחרת מי יממן את זה 😎)</span>';
+    game.shareText=`קשה באימונים, קל בקרב 💪\nבואו להתאמן על להשתבץ לכוסות חד״פ במסיבת סיום — לי דווקא יצא לתפוס ${data.item.n} לפני כולם 🤯 רוצים לנסות גם?\n${url}`;
   } else {
     $('#resultStamp').textContent=rand(LOSE_STAMP);
     $('#resultTitle').innerHTML=rand(LOSE_TITLE);
-    $('#resultSub').innerHTML=LOSE_SUB.replace(/\n/g,'<br>');
-    $('#resultLeft').innerHTML=leftCard(game.absurd,'absurd','הזוי')+leftCard(VEG,'veg','ירוק');
-    $('#resultBrand').innerHTML='אבל אם כבר נתקעת עם ירקות — שיהיו של <b>חסלט</b>: נקיים מחרקים ומפוקחים משאריות חומרי הדברה. <span class="wink">(כן, חייבים פה משפט שיווקי. מישהו צריך לממן את המשחק הזה 🤷)</span>';
-    game.shareText=`נכנסתי לשבץ את עצמי לכיבוד של מסיבת הגן… עד שהבנתי איך פותחים את הקישור, נשארו רק "${game.absurd.n}" ומגש ירקות 😂\nתנסו אתם, נראה אתכם: ${url}\nבחסות חסלט — ירק נקי בלי חרקים 🥦`;
+    $('#resultSub').innerHTML='נשארו רק אלה. אז במה תבחר/י?? 🤔';
+    $('#resultLeft').innerHTML=leftCard(game.absurd,'absurd')+leftCard(VEG,'veg');
+    $('#resultBrand').innerHTML=LOSE_BRAND;
+    game.shareText=`קשה באימונים, קל בקרב 💪\nבואו להתאמן על להשתבץ לכוסות חד״פ במסיבת סיום — לי יצא להביא ${game.absurd.n}. רוצים לנסות גם?\n${url}`;
   }
   overlay.classList.add('is-open');
+  $('#replayFab').hidden=false;
   launchConfetti(kind==='win');
 }
 
@@ -295,6 +291,7 @@ function share(){ window.open('https://wa.me/?text='+encodeURIComponent(game.sha
 function restart(){
   clearTimers(); game.over=false; game.result=null; game.luckyResolved=false;
   overlay.classList.remove('is-open');
+  $('#replayFab').hidden=true;
   show('chat');
   playChat();
 }
@@ -333,9 +330,13 @@ function toggleMute(){ S.muted=!S.muted; const b=$('#muteBtn'); b.textContent=S.
 
 /* ================= wire up ================= */
 overlay.classList.remove('is-open');
+$('#replayFab').hidden=true;
 $('#skipBtn').addEventListener('click',skipChat);
 $('#againBtn').addEventListener('click',restart);
 $('#shareBtn').addEventListener('click',share);
+$('#closeBtn').addEventListener('click',()=>overlay.classList.remove('is-open'));
+$('#replayFab').addEventListener('click',restart);
+waHint.addEventListener('click',()=>{ if(linkEl && linkEl.classList.contains('is-live')) startTable(); });
 $('#muteBtn').addEventListener('click',()=>{ initAudio(); toggleMute(); });
 document.body.addEventListener('pointerdown',initAudio,{once:true});
 window.addEventListener('pageshow',e=>{ if(e.persisted) restart(); });

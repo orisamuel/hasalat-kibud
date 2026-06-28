@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Gveret+Levin&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
   <button class="mute" id="muteBtn" aria-label="כיבוי/הדלקת סאונד" title="סאונד">🔊</button>
@@ -78,6 +78,7 @@
     <div class="overlay" id="overlay">
       <canvas class="confetti" id="confetti"></canvas>
       <div class="result-card" id="resultCard">
+        <button class="result__close" id="closeBtn" aria-label="סגירה">✕</button>
         <div class="result__stamp" id="resultStamp">נגמר.</div>
         <h2 class="result__title" id="resultTitle"></h2>
         <p class="result__sub" id="resultSub"></p>
@@ -95,8 +96,10 @@
       </div>
     </div>
 
+    <button class="replay-fab" id="replayFab" hidden>🔁 עוד ניסיון</button>
+
   </main>
 
-  <script src="game.js?v=3"></script>
+  <script src="game.js?v=5"></script>
 </body>
 </html>
