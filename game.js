@@ -200,6 +200,7 @@ function register(){
 
 /* ---------------- result ---------------- */
 function showResult(name){
+  if(!S.done) return;            // bail if the game was reset before this fired
   const secs=Math.max(1.6,(performance.now()-S.t0)/1000);
   $('#resultHello').textContent=`${name}, היא כולה שלך.`;
   const stats=$('#resultStats'); stats.innerHTML='';
@@ -213,7 +214,7 @@ function showResult(name){
     stats.appendChild(li);
   });
   $('#resultPunch').textContent=rand(PUNCHES);
-  overlay.hidden=false;
+  overlay.classList.add('is-open');
   launchConfetti();
 }
 
@@ -223,7 +224,7 @@ function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; 
 function restart(){
   clearTimers();
   S.started=false; S.done=false; S.ahead=0; parentPool=[];
-  overlay.hidden=true;
+  overlay.classList.remove('is-open');
   startBtn.classList.remove('is-hidden');
   setCoach(INTRO_LINE,'happy');
   buildRows();
@@ -304,9 +305,14 @@ function toggleMute(){
 
 /* ---------------- wire up ---------------- */
 coachAv.innerHTML=COACH_SVG;
+overlay.classList.remove('is-open');   // never start with the popup open
 buildRows();
 setCoach(INTRO_LINE,'happy');
 scheduleIdleAutostart();
+
+/* if the page is restored from the browser's back/forward cache after a
+   finished game, reset it to a fresh table instead of the stuck popup */
+window.addEventListener('pageshow', e=>{ if(e.persisted) restart(); });
 startBtn.addEventListener('click',()=>beginRush(null));
 $('#againBtn').addEventListener('click',restart);
 $('#shareBtn').addEventListener('click',share);
