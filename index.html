@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>המאמן לכיבוד 🏆 · חסלט</title>
+  <title>טבלת הכיבוד 🥦 · חסלט</title>
 
-  <meta name="description" content="נרשמת לכיבוד של מסיבת סוף השנה בגן? המאמן האישי שלך פה כדי לדאוג שתתפוס את הדברים הקלים. רק שאי אפשר לנצח אותו... בחסות חסלט — הטעם הנקי של הטבע." />
+  <meta name="description" content="טבלת ההרשמה לכיבוד של מסיבת הגן. רשמו את שמכם ליד מה שתביאו — אבל מהרו, כי איך שמתחילים נשארת רק כרובית ללא חרקים. בחסות חסלט — הטעם הנקי של הטבע." />
 
   <!-- Open Graph / WhatsApp preview -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="המאמן לכיבוד 🏆 — תנסה לתפוס פיתות. ספוילר: לא." />
-  <meta property="og:description" content="כל ההורים נכנסים לטבלת הכיבוד ותופסים את הדברים הקלים. לך נשארת רק כרובית ללא חרקים. בחסות חסלט 🥦" />
+  <meta property="og:title" content="טבלת הכיבוד 🥦 — תנסו להירשם לפיתות. ספוילר: נשארה רק כרובית." />
+  <meta property="og:description" content="כל ההורים מתנפלים על הטבלה ותופסים את הקלים. לך נשארת רק כרובית ללא חרקים. בחסות חסלט 🌱" />
   <meta property="og:image" content="https://orisamuel.github.io/hasalat-kibud/assets/logo.jpg" />
   <meta property="og:locale" content="he_IL" />
   <meta name="theme-color" content="#6FB23C" />
@@ -20,7 +20,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800;900&family=Gveret+Levin&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -29,82 +29,46 @@
 
   <main class="app">
 
-    <!-- ============ START ============ -->
-    <section class="screen screen--start is-active" id="screen-start">
-      <div class="logo-card logo-card--hero">
+    <header class="topbar">
+      <div class="logo-card logo-card--mini">
         <img src="assets/logo.jpg" alt="חסלט — סלי קטיף כפר דרום" />
       </div>
-
-      <h1 class="title">המאמן&nbsp;לכיבוד <span class="title__cup">🏆</span></h1>
-      <p class="subtitle">
-        נרשמת לכיבוד של מסיבת סוף השנה בגן?<br />
-        יש לך מאמן אישי שידאג שתחטוף את הדברים הקלים. מה כבר יכול להשתבש?
-      </p>
-
-      <div class="coach coach--big">
-        <div class="coach__avatar" data-mood="strong"></div>
-        <div class="bubble bubble--intro">
-          אהלן אלוף! 💪 היום אנחנו הולכים על <b>חבילת פיתות</b>. הכי קל בעולם.
-          סמוך עליי — אנחנו לא מפספסים.
-        </div>
+      <div class="titles">
+        <h1 class="title">טבלת הכיבוד 🎉</h1>
+        <p class="subtitle">מסיבת סוף שנה · הגן של הילדים</p>
       </div>
+    </header>
 
-      <button class="btn btn--go pop-in" id="startBtn">יאללה, אני מוכן/ה! ⚡</button>
+    <div class="coach">
+      <div class="coach__avatar" id="coachAvatar"></div>
+      <div class="bubble" id="coachBubble">רשמו את שמכם ליד מה שתביאו — מי שמקדים זוכה בקלים! 💪</div>
+    </div>
 
-      <p class="sponsor">בחסות <b>חסלט</b> · הטעם הנקי של הטבע 🌱</p>
+    <section class="sheet" aria-label="טבלת הרשמה לכיבוד">
+      <div class="sheet__head">
+        <span class="sheet__h1">מה מביאים</span>
+        <span class="sheet__h2">מי מביא ✍️</span>
+      </div>
+      <ul class="rows" id="rows"><!-- injected by JS --></ul>
     </section>
 
-    <!-- ============ GAME ============ -->
-    <section class="screen screen--game" id="screen-game">
-      <header class="game-head">
-        <div class="logo-card logo-card--mini">
-          <img src="assets/logo.jpg" alt="חסלט" />
-        </div>
-        <div class="meters">
-          <div class="meter">
-            <span class="meter__label">😤 מד התסכול</span>
-            <div class="meter__track"><div class="meter__fill" id="frustFill"></div></div>
-          </div>
-          <div class="counter">🏃 הקדימו אותך: <b id="aheadCount">0</b></div>
-        </div>
-      </header>
+    <button class="btn btn--go pop-in" id="startBtn">🖊️ יאללה, תרשמו אותי לפיתות!</button>
 
-      <div class="round-tag" id="roundTag">סיבוב 1</div>
+    <p class="sponsor">בחסות <b>חסלט</b> · הטעם הנקי של הטבע 🌱</p>
 
-      <div class="coach coach--game">
-        <div class="coach__avatar" id="coachAvatar" data-mood="strong"></div>
-        <div class="bubble" id="coachBubble">בוא נתפוס פיתות!</div>
-      </div>
-
-      <div class="arena">
-        <div class="board" id="board"><!-- item cards injected by JS --></div>
-        <div class="countdown" id="countdown" hidden><span id="cdNum">3</span></div>
-      </div>
-
-      <aside class="ledger">
-        <h3 class="ledger__title">📋 טבלת ההרשמה לכיבוד</h3>
-        <ul class="ledger__list" id="ledgerList">
-          <li class="ledger__empty">עוד רגע כולם נכנסים...</li>
-        </ul>
-      </aside>
-
-      <div class="toasts" id="toasts" aria-live="polite"></div>
-    </section>
-
-    <!-- ============ END ============ -->
-    <section class="screen screen--end" id="screen-end">
+    <!-- ===== result overlay ===== -->
+    <div class="overlay" id="overlay" hidden>
       <canvas class="confetti" id="confetti"></canvas>
-
       <div class="result-card" id="resultCard">
         <div class="result__stamp">נרשמת בהצלחה ל־</div>
         <div class="result__emoji">🥦</div>
         <div class="result__item">כרובית ללא חרקים</div>
+        <p class="result__hello" id="resultHello"></p>
         <p class="result__brand">
           באדיבות <b>חסלט</b> — ירק נקי, בלי חרקים, בלי שאריות חומרי הדברה.
         </p>
 
         <ul class="result__stats" id="resultStats"></ul>
-
         <p class="result__punch" id="resultPunch"></p>
 
         <div class="logo-card logo-card--result">
@@ -113,10 +77,10 @@
 
         <div class="result__actions">
           <button class="btn btn--share" id="shareBtn">📲 שתפו בוואטסאפ</button>
-          <button class="btn btn--again" id="againBtn">🔁 עוד סיבוב</button>
+          <button class="btn btn--again" id="againBtn">🔁 שחקו שוב</button>
         </div>
       </div>
-    </section>
+    </div>
 
   </main>
 
