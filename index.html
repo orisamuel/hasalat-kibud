@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>טבלת הכיבוד 🥦 · חסלט</title>
+  <title>שיבוץ לכיבוד 🥦 · חסלט</title>
 
-  <meta name="description" content="טבלת ההרשמה לכיבוד של מסיבת הגן. רשמו את שמכם ליד מה שתביאו — אבל מהרו, כי איך שמתחילים נשארת רק כרובית ללא חרקים. בחסות חסלט — הטעם הנקי של הטבע." />
+  <meta name="description" content="הגננת שלחה קישור לשיבוץ הכיבוד. עד שהבנת איך פותחים — הכל כבר נחטף, ונשארו רק שתי אופציות מפוקפקות. בחסות חסלט — ירקות נקיים מחרקים ומשאריות חומרי הדברה." />
 
-  <!-- Open Graph / WhatsApp preview -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="טבלת הכיבוד 🥦 — תנסו להירשם לפיתות. ספוילר: נשארה רק כרובית." />
-  <meta property="og:description" content="כל ההורים מתנפלים על הטבלה ותופסים את הקלים. לך נשארת רק כרובית ללא חרקים. בחסות חסלט 🌱" />
+  <meta property="og:title" content="שיבוץ לכיבוד 🥦 — עד שפתחת את הקישור, הכל נחטף." />
+  <meta property="og:description" content="קבוצת הווצאפ של הגן, טבלת שיבוץ, וכולם מהירים ממך. נשארות רק 2 אופציות הזויות. בחסות חסלט." />
   <meta property="og:image" content="https://orisamuel.github.io/hasalat-kibud/assets/logo.jpg" />
   <meta property="og:locale" content="he_IL" />
   <meta name="theme-color" content="#6FB23C" />
@@ -20,70 +19,84 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800;900&family=Gveret+Levin&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Gveret+Levin&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <button class="mute" id="muteBtn" aria-label="כיבוי/הדלקת סאונד" title="סאונד">🔊</button>
 
   <main class="app">
 
-    <header class="topbar">
-      <div class="logo-card logo-card--mini">
-        <img src="assets/logo.jpg" alt="חסלט — סלי קטיף כפר דרום" />
+    <!-- ===================== WHATSAPP INTRO ===================== -->
+    <section class="screen wa is-active" id="screen-chat">
+      <div class="wa__bar">
+        <span class="wa__back">‹</span>
+        <div class="wa__avatar" id="waAvatar">🌸</div>
+        <div class="wa__id">
+          <strong id="waName">קבוצת הגן</strong>
+          <span id="waSub">12 משתתפים</span>
+        </div>
+        <span class="wa__icons">📞 ⋮</span>
       </div>
-      <div class="titles">
-        <h1 class="title">טבלת הכיבוד 🎉</h1>
-        <p class="subtitle">מסיבת סוף שנה · הגן של הילדים</p>
-      </div>
-    </header>
 
-    <div class="coach">
-      <div class="coach__avatar" id="coachAvatar"></div>
-      <div class="bubble" id="coachBubble">רשמו את שמכם ליד מה שתביאו — מי שמקדים זוכה בקלים! 💪</div>
-    </div>
-
-    <section class="sheet" aria-label="טבלת הרשמה לכיבוד">
-      <div class="sheet__head">
-        <span class="sheet__h1">מה מביאים</span>
-        <span class="sheet__h2">מי מביא ✍️</span>
+      <div class="wa__chat" id="waChat">
+        <div class="wa__date">היום</div>
+        <div class="wa__enc">🔒 ההודעות מוצפנות מקצה לקצה. גם הכרובית.</div>
       </div>
-      <ul class="rows" id="rows"><!-- injected by JS --></ul>
+
+      <div class="wa__footer">
+        <div class="wa__hint" id="waHint" hidden>👆 לחצו על הקישור כדי להשתבץ</div>
+        <button class="wa__skip" id="skipBtn">דלג ⏭️</button>
+      </div>
     </section>
 
-    <button class="btn btn--go pop-in" id="startBtn">🖊️ יאללה, תרשמו אותי לפיתות!</button>
+    <!-- ===================== SIGN-UP TABLE ===================== -->
+    <section class="screen screen--table" id="screen-table">
+      <header class="topbar">
+        <div class="logo-card logo-card--mini"><img src="assets/logo.jpg" alt="חסלט" /></div>
+        <div class="titles">
+          <h1 class="title">טבלת השיבוץ</h1>
+          <p class="subtitle" id="tableSub">כיבוד · מסיבת סוף שנה</p>
+        </div>
+      </header>
 
-    <p class="sponsor">בחסות <b>חסלט</b> · הטעם הנקי של הטבע 🌱</p>
+      <div class="status" id="status">פותח את הטבלה…</div>
 
-    <!-- ===== result overlay ===== -->
+      <section class="sheet" aria-label="טבלת שיבוץ לכיבוד">
+        <div class="sheet__head">
+          <span class="sheet__h1">מה מביאים</span>
+          <span class="sheet__h2">מי שובץ</span>
+        </div>
+        <ul class="rows" id="rows"></ul>
+      </section>
+
+      <p class="sponsor">בחסות <b>חסלט</b> · ירק נקי, בלי חרקים</p>
+    </section>
+
+    <!-- ===================== RESULT OVERLAY ===================== -->
     <div class="overlay" id="overlay">
       <canvas class="confetti" id="confetti"></canvas>
       <div class="result-card" id="resultCard">
-        <div class="result__stamp">נרשמת בהצלחה ל־</div>
-        <div class="result__emoji">🥦</div>
-        <div class="result__item">כרובית ללא חרקים</div>
-        <p class="result__hello" id="resultHello"></p>
-        <p class="result__brand">
-          באדיבות <b>חסלט</b> — ירק נקי, בלי חרקים, בלי שאריות חומרי הדברה.
-        </p>
+        <div class="result__stamp" id="resultStamp">נגמר.</div>
+        <h2 class="result__title" id="resultTitle"></h2>
+        <p class="result__sub" id="resultSub"></p>
 
-        <ul class="result__stats" id="resultStats"></ul>
-        <p class="result__punch" id="resultPunch"></p>
+        <div class="result__left" id="resultLeft"></div>
 
-        <div class="logo-card logo-card--result">
-          <img src="assets/logo.jpg" alt="חסלט — הטעם הנקי של הטבע" />
-        </div>
+        <p class="result__brand" id="resultBrand"></p>
+
+        <div class="logo-card logo-card--result"><img src="assets/logo.jpg" alt="חסלט — הטעם הנקי של הטבע" /></div>
 
         <div class="result__actions">
-          <button class="btn btn--share" id="shareBtn">📲 שתפו בוואטסאפ</button>
-          <button class="btn btn--again" id="againBtn">🔁 שחקו שוב</button>
+          <button class="btn btn--share" id="shareBtn">📲 שתפו את הבושה</button>
+          <button class="btn btn--again" id="againBtn">🔁 עוד ניסיון</button>
         </div>
       </div>
     </div>
 
   </main>
 
-  <script src="game.js?v=2"></script>
+  <script src="game.js?v=3"></script>
 </body>
 </html>
