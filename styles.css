@@ -92,8 +92,8 @@ body{
 .linkcard__ico{width:42px; height:42px; border-radius:9px; background:var(--green);
   display:flex; align-items:center; justify-content:center; font-size:22px; flex:0 0 auto;}
 .linkcard__t{flex:1; min-width:0;}
-.linkcard__t b{display:block; font-size:14px; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.linkcard__t span{font-size:12px; color:#667;}
+.linkcard__t b{font-size:14px; color:#111; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+.linkcard__t span{font-size:12px; color:#667; line-height:1.35; margin-top:2px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
 .linkcard__url{padding:7px 10px; font-size:12.5px; color:#1f8acb; word-break:break-all;
   display:flex; align-items:center; gap:6px; justify-content:space-between;}
 .linkcard__lock{font-size:12px; color:#b00; font-weight:600;}
@@ -163,10 +163,9 @@ body{
 .flash{animation:flash .5s ease;}
 @keyframes flash{0%{background:#fff3c4;}100%{}}
 
-/* the rare lucky leftover */
-.row--lucky{background:#eafce0 !important; box-shadow:inset 0 0 0 2px var(--green);}
-.row--lucky .row__free{background:var(--green); color:#fff; animation:luckyTag .7s ease-in-out infinite;}
-@keyframes luckyTag{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+/* the rare win — you clicked a free row in time */
+.row--win{background:#e6fbd9 !important; box-shadow:inset 0 0 0 2px var(--green);}
+.row--win .signed{color:#1c7a1c;}
 
 /* the final two absurd leftovers */
 .row--left{background:#fff8ef !important; box-shadow:inset 0 0 0 2px #ffce8a;}

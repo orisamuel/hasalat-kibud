@@ -50,10 +50,11 @@ const SILLY = [
   {e:'🧊',n:'קוביות קרח'},{e:'🍬',n:'סוכרייה בודדת'},{e:'🍞',n:'קצה של חלה',s:'מאתמול'},
   {e:'🧅',n:'בצל אחד'},{e:'🥢',n:'קיסמים'},{e:'🥤',n:'קשיות'},
 ];
-const CLASSIC = [
+const CLASSIC = [   // כולם: בלי הכנה — יש בבית או קונים מוכן בקלות
   {e:'🫓',n:'חבילת פיתות'},{e:'🥤',n:'שרוול כוסות חד״פ'},{e:'🧃',n:'בקבוק מיץ ענבים'},
-  {e:'🍿',n:'במבה וביסלי'},{e:'🍪',n:'עוגיות'},{e:'🧻',n:'מפיות וצלחות'},
+  {e:'🍿',n:'במבה וביסלי'},{e:'🍪',n:'חבילת עוגיות',s:'קנויות'},{e:'🧻',n:'מפיות וצלחות'},
   {e:'🍫',n:'שוקולד למריחה'},{e:'🍉',n:'אבטיח',s:'שלם, לא חתוך'},
+  {e:'🥨',n:'מארז בייגלה'},{e:'🧇',n:'חבילת ופלים'},{e:'🥤',n:'בקבוק קולה'},
 ];
 const ABSURD = [
   {e:'🍄',n:'פטריות שיטאקי מוקפצות',s:'על מצע אבקת חד-קרן'},
@@ -130,7 +131,7 @@ function renderLink(){
   linkEl=document.createElement('div'); linkEl.className='linkcard';
   linkEl.innerHTML=`
     <div class="linkcard__prev"><div class="linkcard__ico">📋</div>
-      <div class="linkcard__t"><b>טבלת כיבוד · מסיבת סוף שנה</b><span>גיליון שיתופי · שיבוץ הורים</span></div></div>
+      <div class="linkcard__t"><b>בואו להשתבץ ראשונים בכיבוד למסיבה</b><span>נשארים תמיד עם הדברים הכי מסובכים להכנה שצריך להביא למסיבה בגן? זה כי לא התאמנתם מספיק. הגיע הזמן ››</span></div></div>
     <div class="linkcard__url"><span>docs.kibud-sheet.co.il/שיבוץ</span><span class="linkcard__lock">🔒 צפייה בלבד</span></div>`;
   linkEl.addEventListener('click',onLinkClick);
   waChat.appendChild(linkEl); scrollChat();
@@ -180,18 +181,17 @@ function rowHtml(it, whoHtml){
 function startTable(){
   clearTimers();
   show('table');
-  status('פותח את הטבלה…');
+  status('הטבלה נפתחה! מהרו לשבץ את עצמכם 👇');
   buildTable();
-  wait(beginRush, 800);
+  wait(beginRush, 850);
 }
 function buildTable(){
-  game.over=false; game.luckyResolved=false; game.snatched=0; parentPool=[];
+  game.over=false; game.won=false; game.snatched=0; parentPool=[];
   const normals = shuffle([ ...shuffle([...SILLY]).slice(0,3), ...shuffle([...CLASSIC]).slice(0,3) ]);
-  const classicsHere = normals.filter(it=>CLASSIC.includes(it));
   game.normals = normals;
   game.absurd  = rand(ABSURD);
   game.finalTwo= [game.absurd, VEG];
-  game.lucky   = (Math.random() < 1/8 && classicsHere.length) ? rand(classicsHere) : null;
+  game.canWin  = Math.random() < 1/9;   // ~1 in 9 games: clicking a free row in time actually works
   game.rowOf   = new Map();
 
   rowsEl.innerHTML='';
@@ -207,25 +207,17 @@ function buildTable(){
 function beginRush(){
   if(game.over) return;
   game.t0=performance.now();
-  status('רגע… כולם נכנסו בדיוק עכשיו 😳', true);
-  const order = game.normals.filter(it=>it!==game.lucky)
+  status('כולם נכנסו בדיוק עכשיו! 😳', true);
+  const order = game.normals
     .map(it=>({it,silly:SILLY.includes(it)}))
     .sort((a,b)=> (b.silly?1:0)-(a.silly?1:0));   // the too-easy stuff goes first
-  order.forEach((o,k)=> wait(()=>snatchRow(game.rowOf.get(o.it),o.it,false), 220+k*230+Math.random()*120));
-  const waveEnd = 220+order.length*230+420;
-  if(game.lucky){
-    // ~1 in 8: one easy item just stays open ~3s — quick fingers can still grab it
-    game.rowOf.get(game.lucky).classList.add('row--lucky');
-    game.luckyTimer = wait(()=>{ if(game.over||game.luckyResolved) return;
-      snatchRow(game.rowOf.get(game.lucky),game.lucky,false,true); finishLose(); }, 3000);
-  } else {
-    wait(()=>{ if(!game.over) finishLose(); }, waveEnd);
-  }
+  order.forEach((o,k)=> wait(()=>snatchRow(game.rowOf.get(o.it),o.it,false), 260+k*240+Math.random()*120));
+  wait(()=>{ if(!game.over) finishLose(); }, 260+order.length*240+520);
 }
 function snatchRow(li,it,byPlayer,silent){
   if(game.over || !li || li.classList.contains('row--snatched')) return;
   const who=nextParent();
-  li.classList.remove('row--clickable','row--lucky');
+  li.classList.remove('row--clickable');
   li.classList.add('row--snatched','flash');
   li.querySelector('.row__who').innerHTML=`<span class="signed">${who}</span><span class="taken-tag">שובץ</span>`;
   game.snatched++;
@@ -238,24 +230,26 @@ function snatchRow(li,it,byPlayer,silent){
 }
 function onRowClick(li,it){
   if(game.over) return;
-  if(it===game.lucky && !game.luckyResolved && !li.classList.contains('row--snatched')){ grabLucky(li,it); return; }
-  if(game.finalTwo.includes(it)){ finishLose(it); return; }
-  if(!li.classList.contains('row--snatched')) snatchRow(li,it,true);
+  if(game.finalTwo.includes(it)){ finishLose(it); return; }   // picked one of the two leftovers
+  if(li.classList.contains('row--snatched')) return;          // already taken
+  if(game.canWin && !game.won){ winGrab(li,it); return; }     // ~1/9: you clicked in time and it counts
+  snatchRow(li,it,true);                                      // otherwise — snatched from under you
 }
-function grabLucky(li,it){
-  game.luckyResolved=true; game.over=true; clearTimers();
-  li.classList.remove('row--lucky','row--clickable');
+function winGrab(li,it){
+  game.won=true; game.over=true; clearTimers();
+  li.classList.remove('row--clickable');
+  li.classList.add('row--win');
   li.querySelector('.row__who').innerHTML='<span class="signed" style="color:#1c7a1c">את/ה 🎉</span>';
-  status('מה?! הספקת?! 🤯');
+  status('מה?! הספקת לפני כולם?! 🤯');
   playWin();
-  wait(()=>showResult('win',{item:it}), 700);
+  wait(()=>showResult('win',{item:it}), 800);
 }
 function finishLose(chosen){
   if(game.result) return;            // already resolving
   game.over=true; game.result='lose'; clearTimers();
   game.rowOf.get(game.finalTwo[0]).classList.add('row--left');
   game.rowOf.get(game.finalTwo[1]).classList.add('row--left');
-  status('זהו. נשארו רק אלה 👇 אז במה תבחר/י?');
+  status('זהו. נשארו רק אלה 👇 איפה לשבץ אותך?');
   wait(()=>showResult('lose',{}), chosen?900:2800);   // give a few seconds to read the list
 }
 
@@ -276,7 +270,7 @@ function showResult(kind,data){
   } else {
     $('#resultStamp').textContent=rand(LOSE_STAMP);
     $('#resultTitle').innerHTML=rand(LOSE_TITLE);
-    $('#resultSub').innerHTML='נשארו רק אלה. אז במה תבחר/י?? 🤔';
+    $('#resultSub').innerHTML='נשארו רק אלה. איפה לשבץ אותך? 🤔';
     $('#resultLeft').innerHTML=leftCard(game.absurd,'absurd')+leftCard(VEG,'veg');
     $('#resultBrand').innerHTML=LOSE_BRAND;
     game.shareText=`קשה באימונים, קל בקרב 💪\nבואו להתאמן על להשתבץ לכוסות חד״פ במסיבת סיום — לי יצא להביא ${game.absurd.n}. רוצים לנסות גם?\n${url}`;
@@ -289,7 +283,7 @@ function showResult(kind,data){
 /* ================= share / restart ================= */
 function share(){ window.open('https://wa.me/?text='+encodeURIComponent(game.shareText||location.href),'_blank','noopener'); }
 function restart(){
-  clearTimers(); game.over=false; game.result=null; game.luckyResolved=false;
+  clearTimers(); game.over=false; game.result=null; game.won=false;
   overlay.classList.remove('is-open');
   $('#replayFab').hidden=true;
   show('chat');
