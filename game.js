@@ -38,8 +38,16 @@ const FIXED = [
 ];
 const CHEEKY = [
   '@{p} שיבצתי אותך לקיסמים, אל תתווכחי 😘','אני כבר תפסתי מפיות 🙌 בהצלחה לשאר',
-  'מי שישן — מביא מגש ירקות. כלל ידוע 😈','@{p} לקחתי לך פיתות, תודה אחר כך 😏',
-  'תכל׳ס תפסתי גם פיתות וגם כוסות. אלוף 💪',
+  '@{p} לקחתי לך פיתות, תודה אחר כך 😏','תכל׳ס תפסתי גם פיתות וגם כוסות. אלוף 💪',
+];
+// the "whoever's slow gets stuck with the cauliflower" line — varied each game
+const STUCK = [
+  'מי שלא יספיק — נתקע עם הכרובית 🥦😈',
+  'מי שישן מביא מגש ירקות. כלל ידוע 😇',
+  'המאחרים מביאים את הסלט, מזכירה 😏',
+  'מי שלא זריז — שמיר ופטרוזיליה עליו 🌿',
+  'האחרון שנשאר? כרובית ללא חרקים. סורי 🤷‍♀️',
+  'מי שמתמהמה מביא את הדבר הכי מסובך, ידוע 🙃',
 ];
 const FILLER = ['😂😂','וואי איזה מהירים','תודה {teacher}! 🙏','אני בחו״ל, תשבצו אותי למשהו קל 🙏','אנשים, תנו לאחרים גם 😤'];
 
@@ -116,8 +124,9 @@ function buildScript(){
     {kind:'msg', who:ps[1], text:rand(ACCESS).replace('{teacher}',teacher)},
     {kind:'msg', who:teacher, text:rand(FIXED), unlock:true},
     {kind:'msg', who:ps[2], text:rand(CHEEKY).replace('{p}',ps[3])},
+    {kind:'msg', who:ps[3], text:rand(STUCK)},
   ];
-  if(Math.random()<0.55) steps.push({kind:'msg', who:ps[4], text:rand(FILLER).replace('{teacher}',teacher)});
+  if(Math.random()<0.5) steps.push({kind:'msg', who:ps[4], text:rand(FILLER).replace('{teacher}',teacher)});
   return {group, sub:(11+Math.floor(Math.random()*24))+' משתתפים', colorOf, steps};
 }
 
@@ -131,7 +140,7 @@ function renderLink(){
   linkEl=document.createElement('div'); linkEl.className='linkcard';
   linkEl.innerHTML=`
     <div class="linkcard__prev"><div class="linkcard__ico">📋</div>
-      <div class="linkcard__t"><b>בואו להשתבץ ראשונים בכיבוד למסיבה</b><span>נשארים תמיד עם הדברים הכי מסובכים להכנה שצריך להביא למסיבה בגן? זה כי לא התאמנתם מספיק. הגיע הזמן ››</span></div></div>
+      <div class="linkcard__t"><b>טבלת כיבוד · מסיבת סוף שנה</b><span>גיליון שיתופי · שיבוץ הורים</span></div></div>
     <div class="linkcard__url"><span>docs.kibud-sheet.co.il/שיבוץ</span><span class="linkcard__lock">🔒 צפייה בלבד</span></div>`;
   linkEl.addEventListener('click',onLinkClick);
   waChat.appendChild(linkEl); scrollChat();
