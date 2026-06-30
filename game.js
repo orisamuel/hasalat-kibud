@@ -320,8 +320,7 @@ function restart(){
   clearTimers(); game.over=false; game.result=null; game.won=false; game.rushStarted=false;
   overlay.classList.remove('is-open');
   $('#replayFab').hidden=true;
-  show('chat');
-  playChat();
+  startTable();   // "שחק שוב" מתחיל ישר מטבלת השיבוץ, בלי לחזור למסך הווצאפ
 }
 
 /* ================= confetti ================= */
