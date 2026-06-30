@@ -72,7 +72,7 @@ body{
 .msg__who{font-size:13px; font-weight:700; margin-bottom:2px;}
 .msg__txt{font-size:14.5px; color:#111; white-space:pre-wrap; word-break:break-word; overflow-wrap:anywhere;}
 .msg__txt .at{color:#1f8acb; font-weight:600;}
-.msg__time{font-size:10.5px; color:#8aa; float:left; margin:3px 0 -2px 0;}
+.msg__time{display:block; text-align:left; font-size:10.5px; color:#8aa; margin-top:1px;}
 @keyframes msgIn{from{opacity:0; transform:translateY(8px) scale(.97);}to{opacity:1; transform:none;}}
 
 /* typing indicator */
@@ -245,3 +245,26 @@ body{
 .mute.is-muted{opacity:.55;}
 
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important; animation-iteration-count:1 !important;}}
+
+/* =================== DESKTOP: phone mockup =================== */
+@media (min-width:760px){
+  body{
+    align-items:center; padding:28px 16px;
+    background:radial-gradient(130% 100% at 50% 0%, #d4ecbf 0%, #a9d48c 55%, #7fb862 100%) fixed;
+  }
+  .app{
+    width:392px; max-width:392px; height:min(92vh,840px); min-height:0;
+    border:13px solid #15171a; border-radius:54px;
+    box-shadow:0 34px 70px rgba(20,45,10,.42), 0 2px 0 rgba(255,255,255,.15) inset;
+    overflow:hidden;
+    background:radial-gradient(120% 90% at 50% -10%, #fff 0%, var(--bg-1) 45%, var(--bg-2) 100%);
+  }
+  .wa{height:100%;}
+  .screen.is-active{height:100%;}
+  .screen--table{height:100%; overflow-y:auto;}
+  /* keep the popups & controls inside the phone, not the whole window */
+  .overlay{position:absolute;}
+  .replay-fab{position:absolute;}
+  .toasts{position:absolute;}
+  .mute{position:absolute; top:12px; left:12px;}
+}

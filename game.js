@@ -121,7 +121,7 @@ function nextParent(){ if(!parentPool.length) parentPool=shuffle([...PARENTS]); 
 
 let toastsEl;
 function toast(html,burn){
-  if(!toastsEl){ toastsEl=document.createElement('div'); toastsEl.className='toasts'; document.body.appendChild(toastsEl); }
+  if(!toastsEl){ toastsEl=document.createElement('div'); toastsEl.className='toasts'; (document.querySelector('.app')||document.body).appendChild(toastsEl); }
   const t=document.createElement('div'); t.className='toast'+(burn?' toast--burn':''); t.innerHTML=html;
   toastsEl.appendChild(t); wait(()=>t.remove(),2300);
 }
