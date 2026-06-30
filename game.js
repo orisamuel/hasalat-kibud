@@ -274,7 +274,7 @@ function winGrab(li,it){
   li.classList.remove('row--clickable');
   li.classList.add('row--win');
   li.querySelector('.row__who').innerHTML='<span class="signed" style="color:#1c7a1c">את/ה 🎉</span>';
-  status('מה?! הספקת לפני כולם?! 🤯');
+  status('מה?! הספקת לפני כולם?! 🎉');
   playWin();
   wait(()=>showResult('win',{item:it}), 800);
 }
@@ -296,11 +296,11 @@ function showResult(kind,data){
   const url=location.href.split('#')[0];
   if(kind==='win'){
     $('#resultStamp').textContent='רגע מה?!';
-    $('#resultTitle').innerHTML='הספקת!! <span class="hl">🤯</span>';
+    $('#resultTitle').innerHTML='הספקת!! <span class="hl">🎉</span>';
     $('#resultSub').innerHTML=`תפסת <b>${escapeHtml(data.item.n)}</b> לפני כולם. תצלם מסך — אף אחד לא יאמין לך.`;
     $('#resultLeft').innerHTML=leftCard(data.item,'veg');
     $('#resultBrand').innerHTML='אבל היי — אם כבר מביאים, ירקות של <b>חסלט</b> תמיד מנצחים: נקיים מחרקים ובלי שאריות חומרי הדברה. <span class="wink">(חייבים להגניב פרסומת, אחרת מי יממן את זה 😎)</span>';
-    game.shareText=`קשה באימונים, קל בקרב 💪\nבואו להתאמן על להשתבץ לכוסות חד״פ במסיבת סיום — לי דווקא יצא לתפוס ${data.item.n} לפני כולם 🤯 רוצים לנסות גם?\n${url}`;
+    game.shareText=`קשה באימונים, קל בקרב 💪\nבואו להתאמן על להשתבץ לכוסות חד״פ במסיבת סיום — לי דווקא יצא לתפוס ${data.item.n} לפני כולם 🎉 רוצים לנסות גם?\n${url}`;
   } else {
     $('#resultStamp').textContent=rand(LOSE_STAMP);
     $('#resultTitle').innerHTML=rand(LOSE_TITLE);
