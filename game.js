@@ -315,7 +315,16 @@ function showResult(kind,data){
 }
 
 /* ================= share / restart ================= */
-function share(){ window.open('https://wa.me/?text='+encodeURIComponent(game.shareText||location.href),'_blank','noopener'); }
+function share(){
+  const text = game.shareText || location.href;
+  // מובייל (ב-HTTPS): share sheet מקורי מעביר את כל הטקסט לוואטסאפ בצורה אמינה
+  if(navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+    navigator.share({ text }).catch(()=>openWa(text));
+    return;
+  }
+  openWa(text);   // דסקטופ / נפילה לאחור: click-to-chat של וואטסאפ
+}
+function openWa(text){ window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank'); }
 function restart(){
   clearTimers(); game.over=false; game.result=null; game.won=false; game.rushStarted=false;
   overlay.classList.remove('is-open');
