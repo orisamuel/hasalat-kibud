@@ -209,15 +209,15 @@ function startTable(){
   show('table');
   status('הטבלה נפתחה! מהרו לשבץ את עצמכם 👇');
   buildTable();
-  wait(beginRush, 850);
+  wait(beginRush, 700);
 }
 function buildTable(){
-  game.over=false; game.won=false; game.snatched=0; parentPool=[];
+  game.over=false; game.won=false; game.rushStarted=false; game.snatched=0; parentPool=[];
   const normals = shuffle([ ...shuffle([...SILLY]).slice(0,3), ...shuffle([...CLASSIC]).slice(0,3) ]);
   game.normals = normals;
   game.absurd  = rand(ABSURD);
   game.finalTwo= [game.absurd, VEG];
-  game.canWin  = Math.random() < 1/9;   // ~1 in 9 games: clicking a free row in time actually works
+  game.winnable= Math.random() < 1/8;   // ~1 in 8 games a real window opens; otherwise it's near-impossible
   game.rowOf   = new Map();
 
   rowsEl.innerHTML='';
@@ -232,13 +232,21 @@ function buildTable(){
 }
 function beginRush(){
   if(game.over) return;
+  game.rushStarted=true;            // only now do clicks count
   game.t0=performance.now();
   status('כולם נכנסו בדיוק עכשיו! 😳', true);
   const order = game.normals
     .map(it=>({it,silly:SILLY.includes(it)}))
     .sort((a,b)=> (b.silly?1:0)-(a.silly?1:0));   // the too-easy stuff goes first
-  order.forEach((o,k)=> wait(()=>snatchRow(game.rowOf.get(o.it),o.it,false), 260+k*240+Math.random()*120));
-  wait(()=>{ if(!game.over) finishLose(); }, 260+order.length*240+520);
+  if(game.winnable){
+    // ~1/8: a real ~1s window stays open — a quick click actually grabs a slot
+    order.forEach((o,k)=> wait(()=>snatchRow(game.rowOf.get(o.it),o.it,false), 1100+k*360+Math.random()*220));
+    wait(()=>{ if(!game.over) finishLose(); }, 1100+order.length*360+700);
+  } else {
+    // 7/8: snatched almost instantly — practically impossible to click in time
+    order.forEach((o,k)=> wait(()=>snatchRow(game.rowOf.get(o.it),o.it,false), 50+k*60+Math.random()*50));
+    wait(()=>{ if(!game.over) finishLose(); }, 50+order.length*60+500);
+  }
 }
 function snatchRow(li,it,byPlayer,silent){
   if(game.over || !li || li.classList.contains('row--snatched')) return;
@@ -255,10 +263,10 @@ function snatchRow(li,it,byPlayer,silent){
   }
 }
 function onRowClick(li,it){
-  if(game.over) return;
+  if(game.over || !game.rushStarted) return;                  // nothing is "live" until the rush opens
   if(game.finalTwo.includes(it)){ finishLose(it); return; }   // picked one of the two leftovers
   if(li.classList.contains('row--snatched')) return;          // already taken
-  if(game.canWin && !game.won){ winGrab(li,it); return; }     // ~1/9: you clicked in time and it counts
+  if(game.winnable && !game.won){ winGrab(li,it); return; }   // ~1/8: you clicked inside the window → you're in
   snatchRow(li,it,true);                                      // otherwise — snatched from under you
 }
 function winGrab(li,it){
@@ -309,7 +317,7 @@ function showResult(kind,data){
 /* ================= share / restart ================= */
 function share(){ window.open('https://wa.me/?text='+encodeURIComponent(game.shareText||location.href),'_blank','noopener'); }
 function restart(){
-  clearTimers(); game.over=false; game.result=null; game.won=false;
+  clearTimers(); game.over=false; game.result=null; game.won=false; game.rushStarted=false;
   overlay.classList.remove('is-open');
   $('#replayFab').hidden=true;
   show('chat');
