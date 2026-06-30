@@ -246,25 +246,22 @@ body{
 
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important; animation-iteration-count:1 !important;}}
 
-/* =================== DESKTOP: phone mockup =================== */
+/* =================== DESKTOP: phone mockup (WhatsApp intro only) =================== */
 @media (min-width:760px){
-  body{
+  /* phone frame ONLY while the WhatsApp chat is showing */
+  body[data-screen="chat"]{
     align-items:center; padding:28px 16px;
     background:radial-gradient(130% 100% at 50% 0%, #d4ecbf 0%, #a9d48c 55%, #7fb862 100%) fixed;
   }
-  .app{
+  body[data-screen="chat"] .app{
     width:392px; max-width:392px; height:min(92vh,840px); min-height:0;
     border:13px solid #15171a; border-radius:54px;
     box-shadow:0 34px 70px rgba(20,45,10,.42), 0 2px 0 rgba(255,255,255,.15) inset;
     overflow:hidden;
     background:radial-gradient(120% 90% at 50% -10%, #fff 0%, var(--bg-1) 45%, var(--bg-2) 100%);
   }
-  .wa{height:100%;}
-  .screen.is-active{height:100%;}
-  .screen--table{height:100%; overflow-y:auto;}
-  /* keep the popups & controls inside the phone, not the whole window */
-  .overlay{position:absolute;}
-  .replay-fab{position:absolute;}
-  .toasts{position:absolute;}
-  .mute{position:absolute; top:12px; left:12px;}
+  body[data-screen="chat"] .wa{height:100%;}
+  body[data-screen="chat"] .screen.is-active{height:100%;}
+  /* table & result: normal, readable desktop layout (no phone frame) */
+  body[data-screen="table"] .app{max-width:600px;}
 }

@@ -61,7 +61,7 @@ const SILLY = [
 const CLASSIC = [   // כולם: בלי הכנה — יש בבית או קונים מוכן בקלות
   {e:'🫓',n:'חבילת פיתות'},{e:'🥤',n:'שרוול כוסות חד״פ'},{e:'🧃',n:'בקבוק מיץ ענבים'},
   {e:'🍿',n:'במבה וביסלי'},{e:'🍪',n:'חבילת עוגיות',s:'קנויות'},{e:'🧻',n:'מפיות וצלחות'},
-  {e:'🍫',n:'שוקולד למריחה'},{e:'🍉',n:'אבטיח',s:'שלם, לא חתוך'},
+  {e:'🍫',n:'שוקולד למריחה'},
   {e:'🥨',n:'מארז בייגלה'},{e:'🧇',n:'חבילת ופלים'},{e:'🥤',n:'בקבוק קולה'},
 ];
 const ABSURD = [
@@ -95,7 +95,7 @@ const VEG = {e:'🥗',n:'מגש ירקות חתוכים',s:'חסה, סלרי, ג
 
 const LOSE_STAMP = ['נגמר.','פספסת.','איחרת.','אאוץ׳.'];
 const LOSE_TITLE = ['כל הכיבוד נחטף.','היית איטי מדי.','שובצת ל… כלום.','כולם הקדימו אותך.'];
-const LOSE_BRAND = 'לא נורא, הפעם לא הצלחת. קשה באימונים קל בקרב, אבל אם כבר ירקות אז רק של <b>חסלט</b>. גם נקיים מחרקים וגם מפוקחים משאריות חומרי הדברה. <span class="wink">(היינו חייבים את המסר השיווקי כאן כדי להצדיק את המימון של הפיתוח)</span>';
+const LOSE_BRAND = 'לא נורא, הפעם לא הצלחת - קשה באימונים, קל בקרב! אבל אם כבר ירקות אז רק של <b>חסלט</b>. גם נקיים מחרקים וגם מפוקחים משאריות חומרי הדברה. <span class="wink">(היינו חייבים את המסר השיווקי כאן כדי להצדיק את המימון של הפיתוח)</span>';
 
 /* ------------------- state ------------------- */
 const S = { muted:false, audioReady:false, timers:[], chatDone:false };
@@ -112,7 +112,7 @@ const rand    = a => a[Math.floor(Math.random()*a.length)];
 const shuffle = a => a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(p=>p[1]);
 const wait    = (fn,ms)=>{ const t=setTimeout(fn,ms); S.timers.push(t); return t; };
 function clearTimers(){ S.timers.forEach(clearTimeout); S.timers=[]; }
-function show(name){ Object.values(screens).forEach(s=>s.classList.remove('is-active')); screens[name].classList.add('is-active'); window.scrollTo(0,0); }
+function show(name){ Object.values(screens).forEach(s=>s.classList.remove('is-active')); screens[name].classList.add('is-active'); document.body.dataset.screen=name; window.scrollTo(0,0); }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 function fmt(t){ return escapeHtml(t).replace(/@[֐-׿\w]+/g,m=>`<span class="at">${m}</span>`).replace(/\n/g,'<br>'); }
 
@@ -297,9 +297,9 @@ function showResult(kind,data){
   if(kind==='win'){
     $('#resultStamp').textContent='רגע מה?!';
     $('#resultTitle').innerHTML='הספקת!! <span class="hl">🎉</span>';
-    $('#resultSub').innerHTML=`תפסת <b>${escapeHtml(data.item.n)}</b> לפני כולם. תצלם מסך — אף אחד לא יאמין לך.`;
+    $('#resultSub').innerHTML='מבחינתנו קצת מבאס שהצלחת, כי הקטע שלנו זה שנשאר הירקות ואז אנחנו דוחפים את המסר השיווקי על זה שהירקות שלנו נקיים מחרקים ומפוקחים משאריות חומרי הדברה, ועכשיו אין לנו איפה לדחוף אותו. אוף.';
     $('#resultLeft').innerHTML=leftCard(data.item,'veg');
-    $('#resultBrand').innerHTML='אבל היי — אם כבר מביאים, ירקות של <b>חסלט</b> תמיד מנצחים: נקיים מחרקים ובלי שאריות חומרי הדברה. <span class="wink">(חייבים להגניב פרסומת, אחרת מי יממן את זה 😎)</span>';
+    $('#resultBrand').innerHTML='';   // הניצחון: המסר השיווקי כבר בתת-הכותרת (הקטע: אין להם איפה לדחוף אותו)
     game.shareText=`קשה באימונים, קל בקרב 💪\nבואו להתאמן על להשתבץ לכוסות חד״פ במסיבת סיום — לי דווקא יצא לתפוס ${data.item.n} לפני כולם 🎉 רוצים לנסות גם?\n${url}`;
   } else {
     $('#resultStamp').textContent=rand(LOSE_STAMP);
@@ -348,21 +348,8 @@ function launchConfetti(big){
   })();
 }
 
-/* ================= audio ================= */
-let AC=null, masterGain=null;
-function initAudio(){ if(S.audioReady) return;
-  try{ AC=new (window.AudioContext||window.webkitAudioContext)(); masterGain=AC.createGain();
-    masterGain.gain.value=S.muted?0:0.5; masterGain.connect(AC.destination); S.audioReady=true; }catch(e){} }
-function tone(freq,dur,type='sine',vol=0.3){ if(!S.audioReady||S.muted) return;
-  const o=AC.createOscillator(), g=AC.createGain(); o.type=type; o.frequency.value=freq;
-  g.gain.setValueAtTime(0,AC.currentTime); g.gain.linearRampToValueAtTime(vol,AC.currentTime+0.01);
-  g.gain.exponentialRampToValueAtTime(0.0001,AC.currentTime+dur); o.connect(g); g.connect(masterGain);
-  o.start(); o.stop(AC.currentTime+dur); }
-const playPop =()=>tone(520,0.07,'square',0.13);
-const playDing=()=>tone(880,0.16,'triangle',0.2);
-function playWin(){ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,0.3,'triangle',0.26),i*110)); }
-function toggleMute(){ S.muted=!S.muted; const b=$('#muteBtn'); b.textContent=S.muted?'🔇':'🔊'; b.classList.toggle('is-muted',S.muted);
-  if(masterGain) masterGain.gain.value=S.muted?0:0.5; }
+/* ================= (no audio — the site is silent) ================= */
+const playPop=()=>{}, playDing=()=>{}, playWin=()=>{};
 
 /* ================= wire up ================= */
 overlay.classList.remove('is-open');
@@ -373,8 +360,6 @@ $('#shareBtn').addEventListener('click',share);
 $('#closeBtn').addEventListener('click',()=>overlay.classList.remove('is-open'));
 $('#replayFab').addEventListener('click',restart);
 waHint.addEventListener('click',()=>{ if(linkEl && linkEl.classList.contains('is-live')) startTable(); });
-$('#muteBtn').addEventListener('click',()=>{ initAudio(); toggleMute(); });
-document.body.addEventListener('pointerdown',initAudio,{once:true});
 window.addEventListener('pageshow',e=>{ if(e.persisted) restart(); });
 window.addEventListener('resize',()=>{ const cv=$('#confetti'); if(cv){ cv.width=innerWidth; cv.height=innerHeight; } });
 playChat();
