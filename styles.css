@@ -228,6 +228,36 @@ body{
 .replay-fab[hidden]{display:none;}
 .replay-fab:active{transform:translateX(-50%) translateY(2px);}
 
+/* =================== ABOUT =================== */
+.overlay--about{z-index:80;}
+.about-card{text-align:center;}
+.logo-card--about{width:min(46%,168px); margin:2px auto 14px;}
+.about__body{text-align:start;}
+.about__body p{font-size:14.5px; color:var(--ink-soft); font-weight:500; line-height:1.62; margin-bottom:11px;}
+.about__body p:last-child{margin-bottom:0;}
+
+.btn--train{background:var(--green); box-shadow:0 6px 0 var(--green-d); margin-top:18px;}
+.btn--train:hover{background:var(--green-l);} .btn--train:active{box-shadow:0 1px 0 var(--green-d);}
+
+.about__social{margin-top:18px; padding-top:16px; border-top:1px dashed #e3eed5;}
+.about__social-label{display:block; font-size:12.5px; font-weight:700; color:var(--muted); margin-bottom:10px;}
+.about__social-row{display:flex; justify-content:center; gap:14px;}
+.about__social-row a{width:42px; height:42px; border-radius:50%; background:#f2f7ec; color:var(--green-d);
+  display:flex; align-items:center; justify-content:center; transition:transform .12s, background .2s, color .2s;}
+.about__social-row a:hover{background:var(--green); color:#fff; transform:translateY(-2px);}
+.about__social-row a:active{transform:translateY(0);}
+.about__social-row svg{width:21px; height:21px;}
+
+/* discreet "about" entry points (kept intentionally low-key) */
+.about-link{display:inline-block; margin:2px auto 0; background:none; border:none; cursor:pointer;
+  font-family:var(--font); font-size:12.5px; font-weight:600; color:var(--muted); text-decoration:underline;
+  text-underline-offset:3px; text-decoration-color:#cdd8c4;}
+.about-link:hover{color:var(--green-d);}
+.sponsor__link{font:inherit; background:none; border:none; padding:0; cursor:pointer; color:var(--green-d); font-weight:800;
+  text-decoration:underline; text-underline-offset:2px; text-decoration-color:transparent; transition:text-decoration-color .2s;}
+.sponsor__link:hover{text-decoration-color:var(--green-d);}
+.wa__id, .wa__icons{cursor:pointer;}
+
 /* =================== toasts / mute =================== */
 .toasts{position:fixed; left:0; right:0; bottom:78px; display:flex; flex-direction:column; align-items:center;
   gap:7px; pointer-events:none; z-index:60; padding:0 12px;}

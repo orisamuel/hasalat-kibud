@@ -332,6 +332,20 @@ function restart(){
   startTable();   // "שחק שוב" מתחיל ישר מטבלת השיבוץ, בלי לחזור למסך הווצאפ
 }
 
+/* ================= about ================= */
+const aboutEl=$('#about');
+function openAbout(){ aboutEl.classList.add('is-open'); }
+function closeAbout(){ aboutEl.classList.remove('is-open'); }
+function trainFromStart(){          // "יאללה להתאמן" — משחק חדש מלא, כולל מסך הווצאפ מהתחלה
+  clearTimers();
+  closeAbout();
+  overlay.classList.remove('is-open');
+  $('#replayFab').hidden=true;
+  game.over=false; game.result=null; game.won=false; game.rushStarted=false;
+  show('chat');
+  playChat();
+}
+
 /* ================= confetti ================= */
 function launchConfetti(big){
   const cv=$('#confetti'), ctx=cv.getContext('2d'), dpr=window.devicePixelRatio||1;
@@ -359,6 +373,14 @@ $('#againBtn').addEventListener('click',restart);
 $('#shareBtn').addEventListener('click',share);
 $('#closeBtn').addEventListener('click',()=>overlay.classList.remove('is-open'));
 $('#replayFab').addEventListener('click',restart);
+closeAbout();
+$('#aboutClose').addEventListener('click',closeAbout);
+aboutEl.addEventListener('click',e=>{ if(e.target===aboutEl) closeAbout(); });
+$('#trainBtn').addEventListener('click',trainFromStart);
+$('#aboutOpen').addEventListener('click',openAbout);
+$('#sponsorAbout').addEventListener('click',openAbout);
+$('#waInfo').addEventListener('click',openAbout);
+$('#waMenu').addEventListener('click',openAbout);
 waHint.addEventListener('click',()=>{ if(linkEl && linkEl.classList.contains('is-live')) startTable(); });
 window.addEventListener('pageshow',e=>{ if(e.persisted) restart(); });
 window.addEventListener('resize',()=>{ const cv=$('#confetti'); if(cv){ cv.width=innerWidth; cv.height=innerHeight; } });
