@@ -115,6 +115,8 @@ function clearTimers(){ S.timers.forEach(clearTimeout); S.timers=[]; }
 function show(name){ Object.values(screens).forEach(s=>s.classList.remove('is-active')); screens[name].classList.add('is-active'); document.body.dataset.screen=name; window.scrollTo(0,0); }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 function fmt(t){ return escapeHtml(t).replace(/@[֐-׿\w]+/g,m=>`<span class="at">${m}</span>`).replace(/\n/g,'<br>'); }
+// קישור קנוני נקי לשיתוף — בלי query (fbclid/utm) ובלי hash, כדי שלא נגרור זוהמה קדימה
+function cleanUrl(){ return location.origin + location.pathname; }
 
 let parentPool=[];
 function nextParent(){ if(!parentPool.length) parentPool=shuffle([...PARENTS]); return parentPool.pop(); }
@@ -293,7 +295,7 @@ function leftCard(it, variant){
     `<div class="t"><b>${escapeHtml(it.n)}</b>${it.s?`<span>${escapeHtml(it.s)}</span>`:''}</div></div>`;
 }
 function showResult(kind,data){
-  const url=location.href.split('#')[0];
+  const url=cleanUrl();
   if(kind==='win'){
     $('#resultStamp').textContent='רגע מה?!';
     $('#resultTitle').innerHTML='הספקת!! <span class="hl">🎉</span>';
@@ -366,6 +368,14 @@ function launchConfetti(big){
 const playPop=()=>{}, playDing=()=>{}, playWin=()=>{};
 
 /* ================= wire up ================= */
+// ניקוי שורת הכתובת מפרמטרי מעקב שמטא/פרסום מוסיפים (fbclid, utm_*, gclid…) — נכנסים לדף עם URL נקי
+(function stripTrackingParams(){
+  try{
+    const u=new URL(location.href);
+    const junk=[...u.searchParams.keys()].filter(k=>/^utm_/i.test(k)||/^(fbclid|gclid|dclid|msclkid|mc_eid|igshid)$/i.test(k));
+    if(junk.length){ junk.forEach(k=>u.searchParams.delete(k)); history.replaceState(null,'',u.pathname+u.search+u.hash); }
+  }catch(e){}
+})();
 overlay.classList.remove('is-open');
 $('#replayFab').hidden=true;
 $('#skipBtn').addEventListener('click',skipChat);
